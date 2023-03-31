@@ -38,38 +38,65 @@ function handleReadInput(e) {
     if (inputValue === '') {
         cleanerPage();
         btnLoadMoreIsHidden(); 
+        countPage = 2;
     } else { return inputValue; }
 }
 
 
-
-function axiosRequest(name, countPage) {
+function handleMakeBtnSearchImages(e) {
+    e.preventDefault();
+    const name = handleReadInput();
+    let countPage = 1;
     axios.get(`${BASE_URL}?key=${KEY_API}&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${perPage}&page=${countPage}`)
     .then(response => { 
-        const totalImg = response.data.totalHits;
-        
-        console.log(response);
-        if ((totalImg !== 0) && (countPage === 1)) {
-            Notiflix.Notify.info(`Hooray! We found ${totalImg} images.`)
+        const { data: { totalHits }, data:{hits}  } = response;
+        if ((totalHits !== 0) && (countPage === 1)) {
+            Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
         }
-        if (totalImg !== 0) {
+        if (totalHits !== 0) {
             makeRender(response);
-            const totalImgLS = localStorage.setItem('total', totalImg);
+            
         } else {
             Notiflix.Notify.warning("Sorry, there are no images matching your search query. Please try again.") }     
             
-        if (response.data.hits.length === 40) {
+            if (hits.length === 40) {
                 btnLoadMoreVisible();
-            } else {
-                btnLoadMoreIsHidden();
-            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.")
-        }   
-    })
-        
+            }
+            // else {
+            //     btnLoadMoreIsHidden();
+            //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.")    }      
+            })
             .catch(err => console.log(err));
         }
         
+countPage = 2;
+function handleMakeBtnLoadMore() {
+    const name = handleReadInput();
+    
+    axios.get(`${BASE_URL}?key=${KEY_API}&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${perPage}&page=${countPage}`)
+    .then(response => { 
+        const { data: { totalHits }, data: { hits } } = response;
+        const name = handleReadInput();
+        console.log(countPage);
+         if ((hits.length)  === perPage) {
+             console.log(hits.length);
+             countPage += 1;
+             makeRender(response);   
+         } else {
+            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.")  
+             makeRender(response);  
+             btnLoadMoreIsHidden();
+         }
         
+            // if (hits.length === 40) {
+            //     btnLoadMoreVisible();
+            // } else {
+            //     btnLoadMoreIsHidden();
+            //     Notiflix.Notify.info("We're sorry, but you've reached the end of search results.")    }      
+            })
+            .catch(err => console.log(err));
+ }      
+
 function makeRender(response) {
     const markupImg = (({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
         return `
@@ -100,23 +127,23 @@ function makeRender(response) {
     
 }
 
-const totalImgGetLS = localStorage.getItem('total');
-const totalImgCount = JSON.parse(totalImgGetLS);
+// const totalImgGetLS = localStorage.getItem('total');
+// const totalImgCount = JSON.parse(totalImgGetLS);
 
-function handleMakeBtnSearchImages(e) {
-    e.preventDefault();
-    const name = handleReadInput();
-    axiosRequest(name, countPage);
-    // Notiflix.Notify.info(`Hooray! We found ${totalImgCount} images.`);
-}
+// function handleMakeBtnSearchImages(e) {
+//     e.preventDefault();
+//     const name = handleReadInput();
+//     axiosRequest(name, countPage);
+//     Notiflix.Notify.info(`Hooray! We found ${totalImgCount} images.`);
+// }
 
-function handleMakeBtnLoadMore() {
-    const name = handleReadInput();
-    if ((totalImgCount % perPage) > 0) {
-        countPage += 1;
-        axiosRequest(name, countPage);   
-    } 
-}
+// function handleMakeBtnLoadMore() {
+//     const name = handleReadInput();
+//     if ((totalImgCount % perPage) > 0) {
+//         countPage += 1;
+//         axiosRequest(name, countPage);   
+//     } 
+// }
 
 // new SimpleLightbox('.gallery a', {
 //     captionsData: 250,
