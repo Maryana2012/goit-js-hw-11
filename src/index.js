@@ -82,7 +82,7 @@ function handleMakeBtnSearchImages(e) {
     .catch(err => console.log(err));
 }
         
-countPage = 2;
+let countPage = 2;
 function handleMakeBtnLoadMore() {
     const name = handleReadInput();
     axiosPromise(name, countPage)
