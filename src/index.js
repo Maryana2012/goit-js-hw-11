@@ -1,8 +1,8 @@
-import './css/styles.css';
 import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import axios from 'axios';
+import './css/styles.css';
 
 const inputEl = document.querySelector('input');
 const btnEl = document.querySelector('button');
@@ -12,7 +12,6 @@ const btnLoadEl = document.querySelector('.load-more');
  
 const BASE_URL = 'https://pixabay.com/api/';
 const KEY_API = '34725568-3bb6c7550daf8cb631b41e469';
-// let countPage = 1;
 const perPage = 40;
 
 inputEl.addEventListener('input', handleReadInput);
@@ -20,33 +19,32 @@ form.addEventListener('submit', handleMakeBtnSearchImages);
 btnLoadEl.addEventListener('click', handleMakeBtnLoadMore);
 btnLoadMoreIsHidden();
 
-function btnLoadMoreIsHidden() {
+function btnLoadMoreIsHidden() {              //приховує кнопку load More
 btnLoadEl.classList.add("is-hidden");    
 }
 
-function btnLoadMoreVisible() {
+function btnLoadMoreVisible() {               //робить видимою кнопку load more
  btnLoadEl.classList.remove("is-hidden");    
 }
 
-function cleanerPage() {
+function cleanerPage() {                      // очищує галерею
     divEl.innerHTML = '';
 }
 
-const lightbox = new SimpleLightbox('.gallery a', {
+const lightbox = new SimpleLightbox('.gallery a', {       //створює новий SimpleLightbox 
     captionsData: 250 });
     
-function smoothScroll() {
+function smoothScroll() {                                 //плавний скрол
     const { height: cardHeight } = document
     .querySelector(".gallery")
     .firstElementChild.getBoundingClientRect();
-    
     window.scrollBy({
     top: cardHeight * 2,
     behavior: "smooth",
     });
 }
 
-function handleReadInput(e) {
+function handleReadInput(e) {                            // зчитує значення input
     const inputValue = inputEl.value.trim();
     if (inputValue === '') {
         cleanerPage();
@@ -55,19 +53,19 @@ function handleReadInput(e) {
     } else { return inputValue; }
 }
 
- const axiosPromise = async (name, countPage) => {
+ const axiosPromise = async (name, countPage) => {      // створюємо запит
      const response = await axios.get(`${BASE_URL}?key=${KEY_API}&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${perPage}&page=${countPage}`); 
      return response;
  }
 
-function handleMakeBtnSearchImages(e) {
+function handleMakeBtnSearchImages(e) {                // функція для кнопки Submit 
     e.preventDefault();
     const name = handleReadInput();
-    let countPage = 1;
-    axiosPromise(name, countPage)
-        .then(response => { console.log(response);
+    let page = 1;
+    axiosPromise(name, page)
+        .then(response => { 
             const { data: { totalHits }, data: { hits } } = response;
-        if ((totalHits !== 0) && (countPage === 1)) {
+        if ((totalHits !== 0) && (page === 1)) {
             Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
         }
         if (totalHits !== 0) {
@@ -77,19 +75,18 @@ function handleMakeBtnSearchImages(e) {
         if (hits.length === 40) {
             btnLoadMoreVisible();
         }
-        smoothScroll();
     })
     .catch(err => console.log(err));
 }
         
-let countPage = 2;
-function handleMakeBtnLoadMore() {
+let page = 2;
+function handleMakeBtnLoadMore() {                    // функція для кнопки Load More
     const name = handleReadInput();
-    axiosPromise(name, countPage)
+    axiosPromise(name, page)
     .then(response => { 
         const { data: { hits } } = response;
         if ((hits.length)  === perPage) {
-            countPage += 1;
+            page += 1;
             makeRender(response);   
             smoothScroll();
         } else {
@@ -97,21 +94,22 @@ function handleMakeBtnLoadMore() {
             makeRender(response);  
             btnLoadMoreIsHidden();
         }
+        smoothScroll();
       })
     .catch(err => console.log(err));
  }      
 
-function makeRender(response) {
+function makeRender(response) {                       // створюємо галерею
     const markupImg = (({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
         return `
         <div class="photo-card">
-        <figure> <a href="${largeImageURL}"><img src="${webformatURL}" alt="${tags}" loading="lazy" width=120 /></a>
-        <figcaption>
+        <figure> <a href="${largeImageURL}" class="link-img"><img src="${webformatURL}" class="image-card" alt="${tags}" loading="lazy" width=330 /></a>
+        <figcaption class="signature">
          <div class="info">
-         <p class="info-item"><b>Likes:${likes}</b></p>
-         <p class="info-item"><b>Views:${views}</b></p>
-         <p class="info-item"><b>Comments:${comments}</b></p>
-         <p class="info-item"><b>Downloads:${downloads}</b></p>
+         <p class="info-item"><b>Likes: ${likes}</b></p>
+         <p class="info-item"><b>Views: ${views}</b></p>
+         <p class="info-item"><b>Comments: ${comments}</b></p>
+            <p class="info-item"><b>Downloads: ${downloads}</b></p>
          </div>
         </figcaption>
         </figure>

@@ -12,49 +12,79 @@ body {
   line-height: 1.5;
 }
 
-#search-box {
-  font: inherit;
-  padding: 8px;
-  max-width: 320px;
-  margin-bottom: 16px;
-}
-
-
-.country-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.country-info {
-  margin-top: 15px;
-  padding: 8px; 
-
-}
-.title{
-  font-weight: 700;
-  font-size: 32px;
-}
-.article{
-  font-weight: 700;
-  margin-right: 5px;
-}
-.sub-title{
-  font-weight: 400;
-  font-size: 16px;
-  margin-left: 10px;
-}
-.items{
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-}
 .is-hidden{
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
 }
-.btn-submit{
+.photo-card{
+  margin-top: 10px;
+  border:2px solid #e0e6cb;
+}
+.gallery{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+ }
+figure{
+  margin: 0;
+}
+img{
+  height: 220px;
+}
+.info{
+  display: flex;
+  justify-content: space-around;
+ }
 
+.info-item{
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.signature{
+  font-size: 10px;
+  font-weight: 100;
+}
+input{
+  padding-left: 10px;
+  margin-left: 300px;
+  border: none;
+  outline: 1px solid #6eaeee;
+  height: 25px;
+  width: 200px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+}
+input::placeholder{
+  padding-left: 10px;
 }
 
+input:focus{
+  outline: 2px solid #6eaeee;
+}
+.btn-submit, .load-more{
+  font-weight: 400;
+  font-size: 14px;
+  color: #6eaeee ;
+  background-color:#ffffb7 ;
+  margin-left: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100px;
+  height: 27px;
+  border: 1px solid black;
+  border-radius: 3px;
+  cursor: pointer;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+}
+
+.btn-submit:hover, .btn-submit:focus, 
+.load-more:hover, .load-more:focus{
+  background-color: #fffb96;
+}
+.load-more{
+  margin-left: 450px;
+}
+.link-img{
+  display: block;
+  height: 220px;
+}
