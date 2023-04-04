@@ -15,12 +15,10 @@ const KEY_API = '34725568-3bb6c7550daf8cb631b41e469';
 const perPage = 40;
 
 inputEl.addEventListener('input', handleReadInput);
-form.addEventListener('submit', handleMakeBtnSearchImages);
-btnLoadEl.addEventListener('click', handleMakeBtnLoadMore);
 btnLoadMoreIsHidden();
 
 function btnLoadMoreIsHidden() {              //приховує кнопку load More
-btnLoadEl.classList.add("is-hidden");    
+    btnLoadEl.classList.add("is-hidden");    
 }
 
 function btnLoadMoreVisible() {               //робить видимою кнопку load more
@@ -34,12 +32,12 @@ function cleanerPage() {                      // очищує галерею
 const lightbox = new SimpleLightbox('.gallery a', {       //створює новий SimpleLightbox 
     captionsData: 250 });
     
-function smoothScroll() {                                 //плавний скрол
-    const { height: cardHeight } = document
+    function smoothScroll() {                                 //плавний скрол
+        const { height: cardHeight } = document
     .querySelector(".gallery")
     .firstElementChild.getBoundingClientRect();
     window.scrollBy({
-    top: cardHeight * 2,
+        top: cardHeight * 2,
     behavior: "smooth",
     });
 }
@@ -60,17 +58,16 @@ const axiosPromise = async (name, countPage) => {    // створюємо за�
     }
     catch {
         err => console.log(err);
-    }
-    
- }
+    } 
+}
 
-function handleMakeBtnSearchImages(e) {                // функція для кнопки Submit 
+const handleMakeBtnSearchImages = async (e) => {                // функція для кнопки Submit 
     e.preventDefault();
     const name = handleReadInput();
     let page = 1;
-    axiosPromise(name, page)
-        .then(response => { 
-            const { data: { totalHits }, data: { hits } } = response;
+    try {
+        const response = await axiosPromise(name, page)
+          const { data: { totalHits }, data: { hits } } = response;
         if ((totalHits !== 0) && (page === 1)) {
             Notiflix.Notify.info(`Hooray! We found ${totalHits} images.`);
         }
@@ -78,32 +75,35 @@ function handleMakeBtnSearchImages(e) {                // функція для 
             makeRender(response); 
         } else {
             Notiflix.Notify.warning("Sorry, there are no images matching your search query. Please try again.") }     
-        if (hits.length === 40) {
-            btnLoadMoreVisible();
+            if (hits.length === 40) {
+                btnLoadMoreVisible();
+            }   
         }
-    })
-    .catch(err => console.log(err));
+    catch (err) { console.log(err); }
 }
+
+form.addEventListener('submit', handleMakeBtnSearchImages);
         
 let page = 2;
-function handleMakeBtnLoadMore() {                    // функція для кнопки Load More
+const handleMakeBtnLoadMore = async() => {                    // функція для кнопки Load More
     const name = handleReadInput();
-    axiosPromise(name, page)
-    .then(response => { 
-        const { data: { hits } } = response;
-        if ((hits.length)  === perPage) {
+    try {
+        const response = await axiosPromise(name, page)
+         const { data: { hits } } = response;
+        if ((hits.length) === perPage) {
             page += 1;
-            makeRender(response);   
+            makeRender(response);
             smoothScroll();
         } else {
-            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.")  
-            makeRender(response);  
+            Notiflix.Notify.info("We're sorry, but you've reached the end of search results.")
+            makeRender(response);
             btnLoadMoreIsHidden();
         }
         smoothScroll();
-      })
-    .catch(err => console.log(err));
- }      
+    }
+    catch (err) { console.log(err) };
+}      
+btnLoadEl.addEventListener('click', handleMakeBtnLoadMore);
 
 function makeRender(response) {                       // створюємо галерею
     const markupImg = (({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => {
