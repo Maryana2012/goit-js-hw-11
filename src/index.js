@@ -53,9 +53,15 @@ function handleReadInput(e) {                            // зчитує зна�
     } else { return inputValue; }
 }
 
- const axiosPromise = async (name, countPage) => {      // створюємо запит
-     const response = await axios.get(`${BASE_URL}?key=${KEY_API}&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${perPage}&page=${countPage}`); 
-     return response;
+const axiosPromise = async (name, countPage) => {    // створюємо запит
+    try {
+        const response = await axios.get(`${BASE_URL}?key=${KEY_API}&q=${name}&image_type=photo&orientation=horizontal&safesearch=true&per_page=${perPage}&page=${countPage}`); 
+        return response;
+    }
+    catch {
+        err => console.log(err);
+    }
+    
  }
 
 function handleMakeBtnSearchImages(e) {                // функція для кнопки Submit 
